@@ -1,5 +1,7 @@
+require('dotenv').config();
 const Koa = require('koa');
 const Router = require('koa-router');
+const passport = require('passport');
 
 const api = require('./api');
 
