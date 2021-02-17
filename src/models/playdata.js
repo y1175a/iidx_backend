@@ -3,6 +3,10 @@ const { Model, DataTypes } = require('sequelize');
 module.exports = class Playdata extends Model {
     static init(sequelize) {
         return super.init({
+            user_id: {
+                type: DataTypes.INTEGER(20),
+                allowNull: false,
+            },
             playcount: {
                 type: DataTypes.INTEGER(10),
                 allowNull: true,
@@ -27,13 +31,14 @@ module.exports = class Playdata extends Model {
                 type: DataTypes.FLOAT,
                 allowNull: true,
             },
-            timestamp: {
-                type: DataTypes.DATE,
-                allowNull: true,
-            },
+            // timestamp: {
+            //     type: DataTypes.DATE,
+            //     allowNull: true,
+            // },
         }, {
             sequelize,
-            modelName: 'Playdata',
+            modelName: 'playdata',
+            tableName: 'playdata',
             timestamps: false,
             underscored: true,
             charset: 'utf8',
@@ -41,7 +46,7 @@ module.exports = class Playdata extends Model {
         });
     }
     static associate(db) {
-        db.User.belongsTo(db.User, { foreignKey: 'user_id', targetKey: 'id'});
-        db.Charts.belongsTo(db.Charts, { foreignKey: 'charts_id', targetKey: 'id'});
+        db.Playdata.belongsTo(db.User, { foreignKey: 'user_id', targetKey: 'id'});
+        db.Playdata.belongsTo(db.Charts, { foreignKey: 'charts_id', targetKey: 'id'});
     };
 }

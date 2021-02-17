@@ -13,13 +13,14 @@ module.exports = class Skillpoint extends Model {
                 allowNull: false,
                 defaultValue: 0,
             },
-            timestamp: {
-                type: DataTypes.DATE,
-                allowNull: true,
-            },
+            // timestamp: {
+            //     type: DataTypes.DATE,
+            //     allowNull: true,
+            // },
         }, {
             sequelize,
-            modelName: 'Skillpoint',
+            modelName: 'skillpoint',
+            tableName: 'skillpoint',
             timestamps: false,
             underscored: true,
             charset: 'utf8',
@@ -27,6 +28,6 @@ module.exports = class Skillpoint extends Model {
         });
     }
     static associate(db) {
-        db.User.belongsTo(db.User, { foreignKey: 'user_id', targetKey: 'id'});
+        db.Skillpoint.belongsTo(db.User, { foreignKey: 'user_id', targetKey: 'id'});
     };
 }

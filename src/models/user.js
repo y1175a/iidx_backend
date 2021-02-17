@@ -32,13 +32,14 @@ module.exports = class User extends Model {
                 type: DataTypes.INTEGER(3),
                 allowNull: true
             },
-            update_timestamp: {
-                type: DataTypes.DATE,
-                allowNull: true,
-            },
+            // update_timestamp: {
+            //     type: DataTypes.DATE,
+            //     allowNull: true,
+            // },
         }, {
             sequelize,
-            modelName: 'User',
+            modelName: 'user',
+            tableName: 'user',
             timestamps: false,
             underscored: true,
             charset: 'utf8',
@@ -46,7 +47,7 @@ module.exports = class User extends Model {
         });
     }
     static associate(db) {
-        db.Playdata.hasMany(db.Playdata, { foreignKey: 'user_id', targetKey: 'id' });
-        db.Skillpoint.hasMany(db.Playdata, { foreignKey: 'user_id', targetKey: 'id' });
+        db.User.hasMany(db.Playdata, { foreignKey: 'user_id', sourceKey: 'id' });
+        db.User.hasMany(db.Skillpoint, { foreignKey: 'user_id', sourceKey: 'id' });
     };
 }

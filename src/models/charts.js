@@ -15,15 +15,7 @@ module.exports = class Charts extends Model {
                 type: DataTypes.STRING(100),
                 allowNull: false,
             },
-            lowertempo: {
-                type: DataTypes.INTEGER(5),
-                allowNull: false,
-            },
-            uppertempo: {
-                type: DataTypes.INTEGER(5),
-                allowNull: false,
-            },
-            difficulty: {
+            diff: {
                 type: DataTypes.INTEGER(2),
                 allowNull: false,
             },
@@ -41,7 +33,8 @@ module.exports = class Charts extends Model {
             },
         }, {
             sequelize,
-            modelName:'Charts',
+            modelName:'charts',
+            tableName:'charts',
             timestamps: false,
             underscored: true,
             charset: 'utf8',
@@ -49,6 +42,6 @@ module.exports = class Charts extends Model {
         });
     }
     static associate(db) {
-        db.Playdata.hasMany(db.Playdata, { foreignKey: 'charts_id', targetKey: 'id' });
+        db.Charts.hasMany(db.Playdata, { foreignKey: 'charts_id', sourceKey: 'id' });
     };
 }
