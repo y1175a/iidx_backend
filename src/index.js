@@ -1,20 +1,14 @@
-const mdbConn = require('./mariaDBConn');
+require('dotenv').config();
 const Koa = require('koa');
 const Router = require('koa-router');
+const passport = require('passport');
 
 const api = require('./api');
-mdbConn.getUserList()
-.then((rows) => {
-    console.log(rows);
-})
-.catch((errMsg) => {
-    console.log(errMsg);
-});
 
 const app = new Koa();
 const router = new Router();
 
-const port = process.env.PORT || 4000;
+const port = 4000;
 
 //router 설정
 router.use('/api', api.routes());
