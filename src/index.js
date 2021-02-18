@@ -1,15 +1,16 @@
-const mdbConn = require('./mariaDBConn');
+// const mdbConn = require('./mariaDBConn');
 const Koa = require('koa');
 const Router = require('koa-router');
+const user = require('./api/models/user');
 
 const api = require('./api');
-mdbConn.getUserList()
-.then((rows) => {
-    console.log(rows);
-})
-.catch((errMsg) => {
-    console.log(errMsg);
-});
+// user.getUserList()
+// .then((rows) => {
+//     console.log(rows);
+// })
+// .catch((errMsg) => {
+//     console.log(errMsg);
+// });
 
 const app = new Koa();
 const router = new Router();
