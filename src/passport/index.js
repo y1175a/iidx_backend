@@ -1,10 +1,10 @@
-const passport = require('passport');
-const google = require('./googleStrategy');
+const passport = require('koa-passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const User = require('../models/user');
 
 module.exports = () => {
     passport.serializeUser((user, done) => {
-        done(null, user.uid);
+        done(null, user);
     });
 
     passport.deserializeUser((id, done) => {
@@ -13,5 +13,28 @@ module.exports = () => {
             .catch(err => done(err));
     })
 
-    google();
+    passport.use(new GoogleStrategy({
+        clientID: process.env.CLIENT_ID,
+        clientSecret: process.env.CLIENT_SECRET,
+        callbackURL: 'http://localhost:4000/api/auth/login/callback'
+    }, async (accessToken, refreshToken, profile, done) => {
+            console.log(profile);
+            try {
+                const existUser = await User.findOne({
+                    where: { uid: profile.id }
+                });
+                if (existUser) {
+                    return done(null, existUser);
+                } else {
+                    const newUser = await User.create({
+                        uid: profile.id,
+                        email: profile._json && profile._json.email,
+                        nickname: profile.displayName,
+                    });
+                    return done(null, newUser);
+                }
+            } catch (err) {
+                return done(err);
+            }
+        }));
 }

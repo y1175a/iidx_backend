@@ -1,22 +1,22 @@
 const Router = require('koa-router');
 const router = new Router();
-// const passport = require('passport');
+const passport = require('koa-passport');
 
-// router.get('/login', passport.authenticate('google'))
+router.get('/login', passport.authenticate('google', { scope: ['openid', 'email'] }));
 
-// router.get('/login/callback', passport.authenticate('google', {
-//     failureRedirect: '/'
-// }), ctx => {
-//     ctx.response.redirect('/');
-// });
+router.get('/login/callback', passport.authenticate('google', {
+    failureRedirect: '/login'
+}), ({req, res}) => {
+    res.redirect('http://localhost:3000/');
+});
 
 router.post('/register', ctx => {
     const { username, password } = ctx.request.body;
 })
 
-router.post('/login', ctx => {
-    const { username, password } = ctx.request.body;
-})
+// router.post('/login', ctx => {
+//     const { username, password } = ctx.request.body;
+// })
 
 router.get('/check', ctx => {
     ctx.body = "check";
