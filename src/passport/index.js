@@ -8,7 +8,7 @@ module.exports = () => {
     });
 
     passport.deserializeUser((id, done) => {
-        User.findOne({ where: { uid: id }})
+        User.findOne({ where: { id: id }})
             .then(user => done(null, user))
             .catch(err => done(err));
     })
@@ -23,13 +23,15 @@ module.exports = () => {
                 const existUser = await User.findOne({
                     where: { uid: profile.id }
                 });
+                console.log("test:", existUser);
                 if (existUser) {
                     return done(null, existUser);
                 } else {
                     const newUser = await User.create({
                         uid: profile.id,
                         email: profile._json && profile._json.email,
-                        nickname: profile.displayName,
+                        roletype: 1,
+                        nickname: 'abc',
                     });
                     return done(null, newUser);
                 }

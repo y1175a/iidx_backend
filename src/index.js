@@ -17,17 +17,18 @@ const port = process.env.PORT;
 //router 설정
 router.use('/api', api.routes());
 
+passportConfig();
+
 //app 인스턴스에 라우터 적용
 app.use(bodyParser());
-app.use(router.routes()).use(router.allowedMethods()).use(cors());
+app.keys = [process.env.CLIENT_SECRET];
 app.use(session({
-    key: process.env.CLIENT_SECRET,
     maxAge: 60 * 60 * 1000,
     resave: true,
     saveUninitialized: false
 }, app));
 app.use(passport.initialize()).use(passport.session());
-passportConfig();
+app.use(router.routes()).use(router.allowedMethods()).use(cors());
 app.listen(port, () => {
     console.log('::listening to port ' + port + '::');
 })

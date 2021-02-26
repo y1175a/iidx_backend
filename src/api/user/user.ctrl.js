@@ -2,11 +2,11 @@ const { User } = require('../../../models');
 const { StatusCodes } = require('http-status-codes');
 
 exports.find = async (ctx, next) => {
-    const { uid } = ctx.params;
+    const { id } = ctx.params;
 
     try {
         const user = await User.findOne({
-            where: { uid: uid }
+            where: { id: id }
         });
         if (!user) {
             ctx.status = StatusCodes.NOT_FOUND; // 404

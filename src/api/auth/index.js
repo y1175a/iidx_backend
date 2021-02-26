@@ -6,8 +6,8 @@ router.get('/login', passport.authenticate('google', { scope: ['openid', 'email'
 
 router.get('/login/callback', passport.authenticate('google', {
     failureRedirect: '/login'
-}), ({req, res}) => {
-    res.redirect('http://localhost:3000/');
+}), ctx => {
+    ctx.response.redirect('http://localhost:4000/api/user');
 });
 
 router.post('/register', ctx => {
