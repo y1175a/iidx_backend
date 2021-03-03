@@ -23,15 +23,15 @@ module.exports = () => {
                 const existUser = await User.findOne({
                     where: { uid: profile.id }
                 });
-                console.log("test:", existUser);
                 if (existUser) {
                     return done(null, existUser);
                 } else {
+                    const now = new Date();
                     const newUser = await User.create({
                         uid: profile.id,
                         email: profile._json && profile._json.email,
                         roletype: 1,
-                        nickname: 'abc',
+                        nickname: 'user' + String(now.getTime()),
                     });
                     return done(null, newUser);
                 }

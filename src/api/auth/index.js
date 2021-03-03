@@ -7,23 +7,16 @@ router.get('/login', passport.authenticate('google', { scope: ['openid', 'email'
 router.get('/login/callback', passport.authenticate('google', {
     failureRedirect: '/login'
 }), ctx => {
-    ctx.response.redirect('http://localhost:4000/api/user');
+    ctx.response.redirect('http://localhost:3000/');
 });
-
-router.post('/register', ctx => {
-    const { username, password } = ctx.request.body;
-})
-
-// router.post('/login', ctx => {
-//     const { username, password } = ctx.request.body;
-// })
 
 router.get('/check', ctx => {
     ctx.body = "check";
 })
 
 router.post('/logout', ctx => {
-    ctx.body = "logout";
+    ctx.cookies.set('koa.sess', null, { maxAge: 0, httpOnly: true } )
+    ctx.cookies.set('koa.sess.sig', null, { maxAge: 0, httpOnly: true } )
 })
 
 module.exports = router;
