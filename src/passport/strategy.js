@@ -3,22 +3,12 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const User = require('../models/user');
 
 module.exports = () => {
-    passport.serializeUser((user, done) => {
-        done(null, user);
-    });
-
-    passport.deserializeUser((id, done) => {
-        User.findOne({ where: { id: id }})
-            .then(user => done(null, user))
-            .catch(err => done(err));
-    })
-
     passport.use(new GoogleStrategy({
         clientID: process.env.CLIENT_ID,
         clientSecret: process.env.CLIENT_SECRET,
-        callbackURL: 'http://localhost:4000/api/auth/login/callback'
+        callbackURL: 'http://localhost:4000/api/auth/login/callback',
+        proxy: true
     }, async (accessToken, refreshToken, profile, done) => {
-            console.log(profile);
             try {
                 const existUser = await User.findOne({
                     where: { uid: profile.id }
