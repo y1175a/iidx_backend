@@ -11,12 +11,19 @@ router.get('/login/callback', passport.authenticate('google', {
     ctx.redirect('http://localhost:3000/');
 });
 
-router.get("/login/success", async ctx => {
+router.get('/login/success', async ctx => {
     ctx.body = { user: ctx.state.user };
 });
 
-router.post('/logout', ctx => {
-    ctx.logout();
+router.get('/logout', async ctx => {
+    try {
+        await ctx.logout();
+        ctx.status = 200;
+        ctx.session = null;
+    } catch (err) {
+        ctx.throw(err);
+    }
+    
 })
 
 module.exports = router;
