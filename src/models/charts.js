@@ -4,7 +4,7 @@ module.exports = class Charts extends Model {
     static init(sequelize) {
         return super.init({
             version: {
-                type: DataTypes.INTEGER,
+                type: DataTypes.STRING(20),
                 allowNull: false,
             },
             title: {
@@ -16,17 +16,17 @@ module.exports = class Charts extends Model {
                 allowNull: false,
             },
             diff: {
-                type: DataTypes.INTEGER(2),
+                type: DataTypes.STRING(15),
                 allowNull: false,
             },
-            level: {
-                type: DataTypes.INTEGER(2),
+            lv: {
+                type: DataTypes.INTEGER(3),
                 allowNull: false,
             },
-            potential: {
-                type: DataTypes.FLOAT,
-                allowNull: false,
-            },
+            // potential: {
+            //     type: DataTypes.FLOAT,
+            //     allowNull: false,
+            // },
             notes: {
                 type: DataTypes.INTEGER(5),
                 allowNull: false,
