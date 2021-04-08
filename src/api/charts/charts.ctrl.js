@@ -1,4 +1,4 @@
-const { Charts } = require('../../../models');
+const { Charts, sequelize } = require('../../../models');
 const { StatusCodes } = require('http-status-codes');
 
 exports.getChartById = async (ctx, next) => {
@@ -27,7 +27,7 @@ exports.getCharts = async (ctx, next) => {
     try { 
         const charts = await Charts.findAll({
             limit: limit,
-            offset: offset
+            offset: offset,
         });
 
         if (!charts) {
@@ -35,7 +35,9 @@ exports.getCharts = async (ctx, next) => {
             return;
         }
 
-        ctx.body = charts;
+        const count = await Charts.count();
+
+        ctx.body = {list: [ ...charts ], last: Math.ceil(count / limit)};
     } catch (e) {
         ctx.throw(StatusCodes.INTERNAL_SERVER_ERROR, e); // 500
     }
