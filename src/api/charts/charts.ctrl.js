@@ -1,44 +1,35 @@
 const { Charts, sequelize } = require('../../../models');
+const { Op } = require('sequelize');
 const { StatusCodes } = require('http-status-codes');
 
-exports.getChartById = async (ctx, next) => {
-    const { id } = ctx.params;
-
-    try {
-        const chart = await Charts.findOne({
-            where: { id: id }
-        });
-        if (!chart) {
-            ctx.status = StatusCodes.NOT_FOUND; // 404
-            return;
-        }
-        ctx.body = chart;
-    } catch (e) {
-        ctx.throw(StatusCodes.INTERNAL_SERVER_ERROR, e); // 500
-    }
+const getChart = async attributes => {
+    const chart = await Charts.findOne({ where: { ...attributes }});
+    return chart;
 }
 
-exports.getCharts = async (ctx, next) => {
-    const query = ctx.request.query;
-    const page = query.page ? query.page : 1;
-    const limit = query.limit ? query.limit : 50;
-    const offset = limit * (page - 1);
+const getCharts = async () => {
+    const charts = await Charts.findAll();
+    return charts;
+}
 
-    try { 
-        const charts = await Charts.findAll({
-            limit: limit,
-            offset: offset,
+exports.findChart = async (ctx, next) => {
+    const attributes = ctx.params;
+
+    await getChart(attributes)
+        .then(chart => {
+            ctx.body = chart;
+        })
+        .catch(error => {
+            ctx.throw(StatusCodes.INTERNAL_SERVER_ERROR, error); 
         });
+}
 
-        if (!charts) {
-            ctx.status = StatusCodes.NOT_FOUND; // 404
-            return;
-        }
-
-        const count = await Charts.count();
-
-        ctx.body = {list: [ ...charts ], last: Math.ceil(count / limit)};
-    } catch (e) {
-        ctx.throw(StatusCodes.INTERNAL_SERVER_ERROR, e); // 500
-    }
+exports.findCharts = async (ctx, next) => {
+    await getCharts()
+        .then(charts => {
+            ctx.body = charts;
+        })
+        .catch(error => {
+            ctx.throw(StatusCodes.INTERNAL_SERVER_ERROR, error); 
+        });
 }
