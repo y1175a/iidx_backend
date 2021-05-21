@@ -1,9 +1,10 @@
 const Router = require('koa-router');
-const router = new Router();
+const chart = new Router();
+const charts = new Router();
 const chartsCtrl = require('./charts.ctrl');
 
-router.get('/', chartsCtrl.getCharts);
+chart.get('/:id', chartsCtrl.findChart);
 
-router.get('/:id', chartsCtrl.getChartById);
+charts.get('/', chartsCtrl.findCharts);
 
-module.exports = router;
+module.exports = { chart, charts };
