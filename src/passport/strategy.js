@@ -1,6 +1,6 @@
 const passport = require('koa-passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const User = require('../models/user');
+const Users = require('../../models');
 
 module.exports = () => {
     passport.use(new GoogleStrategy({
@@ -10,14 +10,14 @@ module.exports = () => {
         proxy: true
     }, async (accessToken, refreshToken, profile, done) => {
             try {
-                const existUser = await User.findOne({
+                const existUser = await Users.findOne({
                     where: { uid: profile.id }
                 });
                 if (existUser) {
                     return done(null, existUser);
                 } else {
                     const now = new Date();
-                    const newUser = await User.create({
+                    const newUser = await Users.create({
                         uid: profile.id,
                         email: profile._json && profile._json.email,
                         roletype: 1,

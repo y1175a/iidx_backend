@@ -1,5 +1,5 @@
 const passport = require('koa-passport');
-const User = require('../models/user');
+const { Users } = require('../../models');
 
 module.exports = () => {
     passport.serializeUser((user, done) => {
@@ -7,7 +7,7 @@ module.exports = () => {
     });
 
     passport.deserializeUser((id, done) => {
-        User.findOne({ where: { id: id }})
+        Users.findOne({ where: { id: id }})
             .then(user => {
                 return done(null, user)
             })
