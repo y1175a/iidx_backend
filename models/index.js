@@ -1,32 +1,40 @@
 const Sequelize = require('sequelize');
 
-const User = require('../src/models/user');
-const Skillpoint = require('../src/models/skillpoint');
-const Charts = require('../src/models/charts');
-const Playdata = require('../src/models/playdata');
+const Users = require('./users');
+const Profiles = require('./profiles');
+const Skills = require('./skills');
+const Songs = require('./songs');
+const Charts = require('./charts');
+const Playdata = require('./playdata');
 
 const env = process.env.NODE_ENV || 'development';
 const config = require('../config/config')[env];
-const db = {};
+const models = {};
 
 const sequelize = new Sequelize(config.database, config.username, config.password, config);
 
-db.sequelize = sequelize;
-db.Sequelize = Sequelize;
+models.sequelize = sequelize;
+models.Sequelize = Sequelize;
 
-db.User = User;
-db.Skillpoint = Skillpoint;
-db.Charts = Charts;
-db.Playdata = Playdata;
+models.Users = Users;
+models.Profiles = Profiles;
+models.Skills = Skills;
+models.Songs = Songs;
+models.Charts = Charts;
+models.Playdata = Playdata;
 
-User.init(sequelize);
-Skillpoint.init(sequelize);
+Users.init(sequelize);
+Profiles.init(sequelize);
+Skills.init(sequelize);
+Songs.init(sequelize);
 Charts.init(sequelize);
 Playdata.init(sequelize);
 
-User.associate(db);
-Skillpoint.associate(db);
-Charts.associate(db);
-Playdata.associate(db);
+Users.associate(models);
+Profiles.associate(models);
+Skills.associate(models);
+Songs.associate(models);
+Charts.associate(models);
+Playdata.associate(models);
 
-module.exports = db;
+module.exports = models;
