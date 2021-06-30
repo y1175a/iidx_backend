@@ -18,6 +18,23 @@ exports.find = async (ctx, next) => {
     }
 }
 
+exports.findUserByUid = async (ctx, next) => {
+    const { uid } = ctx.params;
+
+    try {
+        const user = await User.findOne({
+            where: { uid: uid }
+        });
+        if (!user) {
+            ctx.status = StatusCodes.NOT_FOUND; // 404
+            return;
+        }
+        ctx.body = user;
+    } catch (e) {
+        ctx.throw(StatusCodes.INTERNAL_SERVER_ERROR, e); // 500
+    }
+}
+
 exports.findUserByNickname = async (ctx, next) => {
     const { nickname } = ctx.params;
 

@@ -5,6 +5,9 @@ const userCtrl = require('./user.ctrl');
 // 유저 조회 GET
 router.get('/:id', userCtrl.find);
 
+// 유저 조회 GET
+router.get('/userid/:uid', userCtrl.findUserByUid);
+
 // 유저 닉네임으로 조회 GET
 router.get('/nickname/:nickname', userCtrl.findUserByNickname);
 
