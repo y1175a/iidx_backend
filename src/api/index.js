@@ -1,7 +1,7 @@
 const Router = require('koa-router');
 const charts = require('./charts');
 const auth = require('./auth');
-const user = require('./user');
+const user = require('./users');
 const api = new Router();
 
 api.use('/auth', auth.routes());

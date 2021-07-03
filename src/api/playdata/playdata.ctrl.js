@@ -1,3 +1,3 @@
-const { Playdata } = require('../../../models');
+const { Playdata } = require('../../database/models');
 const { StatusCodes } = require('http-status-codes');
 

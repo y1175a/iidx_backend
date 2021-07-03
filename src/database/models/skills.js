@@ -19,7 +19,7 @@ module.exports = class Skills extends Model {
             collate: 'utf8_general_ci',
         });
     }
-    static associate(db) {
-        db.Skillpoints.belongsTo(db.Profiles, { foreignKey: 'profile_id', targetKey: 'id'});
+    static associate(models) {
+        models.Skills.belongsTo(models.Profiles, { foreignKey: 'profile_id', targetKey: 'id'});
     };
 }

@@ -25,7 +25,7 @@ module.exports = class Songs extends Model {
             collate: 'utf8_general_ci',
         });
     }
-    static associate(db) {
-        db.Songs.hasMany(db.Charts, { foreignKey: 'song_id', sourceKey: 'id' });
+    static associate(models) {
+        models.Songs.hasMany(models.Charts, { foreignKey: 'song_id', sourceKey: 'id' });
     };
 }

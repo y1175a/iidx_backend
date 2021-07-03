@@ -1,5 +1,5 @@
 const passport = require('koa-passport');
-const { Users } = require('../../models');
+const { Users } = require('../database/models');
 
 module.exports = () => {
     passport.serializeUser((user, done) => {

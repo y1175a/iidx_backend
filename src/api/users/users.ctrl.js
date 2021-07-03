@@ -1,29 +1,12 @@
-const { User } = require('../../../models');
+const { Users } = require('../../database/models');
 const { StatusCodes } = require('http-status-codes');
 
 exports.find = async (ctx, next) => {
     const { id } = ctx.params;
 
     try {
-        const user = await User.findOne({
+        const user = await Users.findOne({
             where: { id: id }
-        });
-        if (!user) {
-            ctx.status = StatusCodes.NOT_FOUND; // 404
-            return;
-        }
-        ctx.body = user;
-    } catch (e) {
-        ctx.throw(StatusCodes.INTERNAL_SERVER_ERROR, e); // 500
-    }
-}
-
-exports.findUserByUid = async (ctx, next) => {
-    const { uid } = ctx.params;
-
-    try {
-        const user = await User.findOne({
-            where: { uid: uid }
         });
         if (!user) {
             ctx.status = StatusCodes.NOT_FOUND; // 404
@@ -39,25 +22,8 @@ exports.findUserByNickname = async (ctx, next) => {
     const { nickname } = ctx.params;
 
     try {
-        const user = await User.findOne({
+        const user = await Users.findOne({
             where: { nickname: nickname }
-        });
-        if (!user) {
-            ctx.status = StatusCodes.NOT_FOUND; // 404
-            return;
-        }
-        ctx.body = user;
-    } catch (e) {
-        ctx.throw(StatusCodes.INTERNAL_SERVER_ERROR, e); // 500
-    }
-}
-
-exports.findUserByIidxId = async (ctx, next) => {
-    const { id } = ctx.params;
-
-    try {
-        const user = await User.findOne({
-            where: { iidx_id: id }
         });
         if (!user) {
             ctx.status = StatusCodes.NOT_FOUND; // 404

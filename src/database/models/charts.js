@@ -29,7 +29,7 @@ module.exports = class Charts extends Model {
     );
   }
   static associate(models) {
-    models.Charts.belongsTo(db.Songs, {
+    models.Charts.belongsTo(models.Songs, {
       foreignKey: "song_id",
       sourceKey: "id",
     });

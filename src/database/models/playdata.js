@@ -31,8 +31,8 @@ module.exports = class Playdata extends Model {
             collate: 'utf8_general_ci',
         });
     }
-    static associate(db) {
-        db.Playdata.belongsTo(db.User, { foreignKey: 'user_id', targetKey: 'id'});
-        db.Playdata.belongsTo(db.Charts, { foreignKey: 'chart_id', targetKey: 'id'});
+    static associate(models) {
+        models.Playdata.belongsTo(models.Users, { foreignKey: 'user_id', targetKey: 'id'});
+        models.Playdata.belongsTo(models.Charts, { foreignKey: 'chart_id', targetKey: 'id'});
     };
 }

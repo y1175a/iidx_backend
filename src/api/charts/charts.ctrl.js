@@ -1,4 +1,4 @@
-const { Charts, sequelize } = require('../../../models');
+const { Charts, Songs, sequelize } = require('../../database/models');
 const { StatusCodes } = require('http-status-codes');
 
 exports.getChartById = async (ctx, next) => {
@@ -6,12 +6,23 @@ exports.getChartById = async (ctx, next) => {
 
     try {
         const chart = await Charts.findOne({
-            where: { id: id }
+            where: { id: id },
+            include: Songs
+        }).then(chart => {
+            const { title, artist, bpm, version } = chart.Song;
+            const { chart_difficulty, chart_level, chart_skillpoint, notes } = chart;
+
+            return {
+                title,
+                artist,
+                bpm,
+                version,
+                difficulty: chart_difficulty,
+                level: chart_level,
+                skillpoint: chart_skillpoint,
+                notes,
+            }
         });
-        if (!chart) {
-            ctx.status = StatusCodes.NOT_FOUND; // 404
-            return;
-        }
         ctx.body = chart;
     } catch (e) {
         ctx.throw(StatusCodes.INTERNAL_SERVER_ERROR, e); // 500
@@ -28,8 +39,23 @@ exports.getCharts = async (ctx, next) => {
         const charts = await Charts.findAll({
             limit: limit,
             offset: offset,
-        });
+            include: Songs,
+        }).then(charts => charts.map(chart => {
+            const { title, artist, bpm, version } = chart.Song;
+            const { chart_difficulty, chart_level, chart_skillpoint, notes } = chart;
 
+            return {
+                title,
+                artist,
+                bpm,
+                version,
+                difficulty: chart_difficulty,
+                level: chart_level,
+                skillpoint: chart_skillpoint,
+                notes,
+            }
+        }));
+        
         if (!charts) {
             ctx.status = StatusCodes.NOT_FOUND; // 404
             return;
@@ -38,6 +64,7 @@ exports.getCharts = async (ctx, next) => {
         const count = await Charts.count();
 
         ctx.body = {list: [ ...charts ], last: Math.ceil(count / limit)};
+
     } catch (e) {
         ctx.throw(StatusCodes.INTERNAL_SERVER_ERROR, e); // 500
     }
