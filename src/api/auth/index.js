@@ -1,7 +1,6 @@
 const Router = require('koa-router');
 const router = new Router();
 const passport = require('koa-passport');
-const cors = require('@koa/cors');
 
 router.get('/login', passport.authenticate('google', { scope: ['openid', 'email'] }));
 
@@ -20,8 +19,8 @@ router.get('/logout', async ctx => {
         await ctx.logout();
         ctx.status = 200;
         ctx.session = null;
-    } catch (err) {
-        ctx.throw(err);
+    } catch (error) {
+        ctx.throw(error);
     }
     
 })

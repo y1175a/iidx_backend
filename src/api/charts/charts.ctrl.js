@@ -1,8 +1,10 @@
 const { Charts, Songs, sequelize } = require('../../database/models');
 const { StatusCodes } = require('http-status-codes');
 
-exports.getChartById = async (ctx, next) => {
-    const { id } = ctx.params;
+const getChart = async attributes => {
+    const chart = await Charts.findOne({ where: { ...attributes }});
+    return chart;
+}
 
     try {
         const chart = await Charts.findOne({
@@ -29,11 +31,8 @@ exports.getChartById = async (ctx, next) => {
     }
 }
 
-exports.getCharts = async (ctx, next) => {
-    const query = ctx.request.query;
-    const page = query.page ? query.page : 1;
-    const limit = query.limit ? query.limit : 50;
-    const offset = limit * (page - 1);
+exports.findChart = async (ctx, next) => {
+    const attributes = ctx.params;
 
     try { 
         const charts = await Charts.findAll({
