@@ -38,5 +38,9 @@ module.exports = class Users extends Model {
       foreignKey: "user_id",
       sourceKey: "id",
     });
+    models.Users.hasOne(models.Skills, {
+      foreignKey: "user_id",
+      sourceKey: "id",
+    });
   }
 };

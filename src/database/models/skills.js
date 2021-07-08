@@ -13,13 +13,13 @@ module.exports = class Skills extends Model {
             sequelize,
             modelName: 'Skills',
             tableName: 'skills',
-            timestamps: true,
-            underscored: true,
+            timestamps: false,
+            underscored: false,
             charset: 'utf8',
             collate: 'utf8_general_ci',
         });
     }
     static associate(models) {
-        models.Skills.belongsTo(models.Profiles, { foreignKey: 'profile_id', targetKey: 'id'});
+        models.Skills.belongsTo(models.Users, { foreignKey: 'user_id', targetKey: 'id'});
     };
 }

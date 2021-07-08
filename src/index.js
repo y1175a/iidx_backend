@@ -21,7 +21,10 @@ router.use('/api', api.routes());
 passportStrategy();
 
 //app 인스턴스에 라우터 적용
-app.use(bodyParser());
+app.use(bodyParser({
+  formLimit: "10mb",
+  jsonLimit: "10mb"
+}));
 app.keys = [process.env.CLIENT_SECRET];
 app.use(session({
     maxAge: 60 * 60 * 1000,

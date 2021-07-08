@@ -3,20 +3,20 @@ const { Model, DataTypes } = require('sequelize');
 module.exports = class Playdata extends Model {
     static init(sequelize) {
         return super.init({
-            playcount: {
+            score: {
                 type: DataTypes.INTEGER,
             },
-            score: {
+            pgreat: {
+                type: DataTypes.INTEGER,
+            },
+            great: {
                 type: DataTypes.INTEGER,
             },
             rank: {
                 type: DataTypes.STRING,
             },
-            misscount: {
-                type: DataTypes.INTEGER,
-            },
             cleartype: {
-                type: DataTypes.INTEGER,
+                type: DataTypes.STRING,
             },
             skillpoint: {
                 type: DataTypes.FLOAT,
@@ -26,7 +26,7 @@ module.exports = class Playdata extends Model {
             modelName: 'Playdata',
             tableName: 'playdata',
             timestamps: true,
-            underscored: true,
+            underscored: false,
             charset: 'utf8',
             collate: 'utf8_general_ci',
         });

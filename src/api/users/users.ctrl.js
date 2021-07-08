@@ -1,8 +1,21 @@
-const { Users } = require('../../database/models');
+const { Users, Profiles, Skills } = require('../../database/models');
 const { StatusCodes } = require('http-status-codes');
 
-const DEFAULT_PAGINATION_LIMIT = 20;
+const dataTransfer = user => {
+    return {
+        id: user.id,
+        email: user.email,
+        nickname: user.nickname,
+        iidx_id: user.Profile.iidx_id,
+        dj_name: user.Profile.dj_name,
+        dj_class: user.Profile.dj_class,
+        hot_skillpoint: user.Skill.hot_skillpoint,
+        other_skillpoint: user.Skill.other_skillpoint
+    }
+}
 
+exports.findUserById = async (ctx, next) => {
+    const { id } = ctx.params;
     try {
         const user = await Users.findOne({
             where: { id: id }
@@ -34,33 +47,46 @@ exports.findUserByNickname = async (ctx, next) => {
     }
 }
 
-exports.findUsers = async (ctx, next) => {
-    const query = ctx.request.query;
-    const page = query.page ? query.page : 1;
-    const limit = query.limit ? query.limit : 50;
-    const offset = limit * (page - 1);
-
 exports.findUsers = async ctx => {
-    const { page, limit, ...query } = ctx.request.query;
+    const { limit, offset, ...query } = ctx.query;
+
     const attributes = {
-        ...query,
-        limit: limit ? limit * 1 : DEFAULT_PAGINATION_LIMIT,
-        offset: page ? limit * (page - 1) : 0
+        limit: limit ? limit : 50,
+        offset: offset ? offset : 0,
+        include: [ Profiles, Skills ]
     };
 
-    await getUsers(attributes)
-        .then(users => {
-            ctx.body = users;
-        })
+    const users = await Users.findAll(attributes)
         .catch(error => {
             ctx.throw(StatusCodes.INTERNAL_SERVER_ERROR, error); 
         });
+    
+
+    ctx.body = users.map(user => dataTransfer(user));
 };
 
 exports.updateUserInfo = async ctx => {
     const { id } = ctx.params;
-    const { iidx_id, iidx_dan, iidx_name } = ctx.request.body;
 
-    await setUserInfo({ iidx_id, iidx_dan, iidx_name }, id)
-        .catch(error => { ctx.throw(StatusCodes.INTERNAL_SERVER_ERROR, error); })
+    const { nickname, iidx_id, dj_name, dj_class } = ctx.request.body;
+
+    const userForm = { nickname };
+    
+    const profileForm = { 
+        iidx_id,
+        dj_name, 
+        dj_class,
+    };
+
+    const updatedUser = await Users.update(userForm, { where: { id: id }})
+        .catch(error => {
+            ctx.throw(StatusCodes.INTERNAL_SERVER_ERROR, error); 
+        });
+
+    const updatedProfile = await Profiles.update(profileForm, { where: { user_id: id }})
+        .catch(error => {
+            ctx.throw(StatusCodes.INTERNAL_SERVER_ERROR, error); 
+        });
+
+    ctx.body = "프로필 변경 성공";
 }
