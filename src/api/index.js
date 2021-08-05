@@ -1,16 +1,16 @@
 const Router = require('koa-router');
-const charts = require('./charts');
+const chart = require('./chart');
 const auth = require('./auth');
-const users = require('./users');
-const songs = require('./songs');
-const playdata = require('./playdata');
+const user = require('./user');
+const song = require('./song');
+const record = require('./record');
 const api = new Router();
 
 api.use('/auth', auth.routes());
-api.use('/users', users.routes());
-api.use('/charts', charts.routes());
-api.use('/songs', songs.routes());
-api.use('/playdata', playdata.routes());
+api.use('/user', user.routes());
+api.use('/chart', chart.routes());
+api.use('/song', song.routes());
+api.use('/record', record.routes());
 
 
 module.exports = api;
