@@ -1,40 +1,30 @@
 const Sequelize = require('sequelize');
 
-const Users = require('./users');
-const Profiles = require('./profiles');
-const Skills = require('./skills');
-const Songs = require('./songs');
-const Charts = require('./charts');
-const Playdata = require('./playdata');
-
 const env = process.env.NODE_ENV || 'development';
 const config = require('../../../config/config.json')[env];
-const models = {};
+const db = {};
 
 const sequelize = new Sequelize(config.database, config.username, config.password, config);
 
-models.sequelize = sequelize;
-models.Sequelize = Sequelize;
+db.sequelize = sequelize;
+db.Sequelize = Sequelize;
 
-models.Users = Users;
-models.Profiles = Profiles;
-models.Skills = Skills;
-models.Songs = Songs;
-models.Charts = Charts;
-models.Playdata = Playdata;
+db.User = require('./user')(sequelize, Sequelize);
+db.Skill = require('./skill')(sequelize, Sequelize);
+db.Song = require('./song')(sequelize, Sequelize);
+db.Chart = require('./chart')(sequelize, Sequelize);
+db.Record = require('./record')(sequelize, Sequelize);
 
-Users.init(sequelize);
-Profiles.init(sequelize);
-Skills.init(sequelize);
-Songs.init(sequelize);
-Charts.init(sequelize);
-Playdata.init(sequelize);
+db.User.hasOne(db.Skill, { foreignKey: "user_id", sourceKey: "id" });
+db.Skill.belongsTo(db.User, { foreignKey: "user_id", sourceKey: "id" });
 
-Users.associate(models);
-Profiles.associate(models);
-Skills.associate(models);
-Songs.associate(models);
-Charts.associate(models);
-Playdata.associate(models);
+db.User.hasMany(db.Record, { foreignKey: "user_id", sourceKey: "id" });
+db.Record.belongsTo(db.User, { foreignKey: "user_id", sourceKey: "id" });
 
-module.exports = models;
+db.Chart.hasMany(db.Record, { foreignKey: "chart_id", sourceKey: "id" });
+db.Record.belongsTo(db.Chart, { foreignKey: "chart_id", sourceKey: "id" })
+
+db.Song.hasMany(db.Chart, { foreignKey: 'song_id', sourceKey: 'id' });
+db.Chart.belongsTo(db.Song, { foreignKey: 'song_id', sourceKey: 'id' });
+
+module.exports = db;
