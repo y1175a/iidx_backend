@@ -22,7 +22,6 @@ router.get('/logout', async ctx => {
     } catch (error) {
         ctx.throw(error);
     }
-    
 })
 
 module.exports = router;
