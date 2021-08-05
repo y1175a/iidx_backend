@@ -6,17 +6,10 @@
     "host": "127.0.0.1",
     "dialect": "mariadb"
   },
-  "development_banana": {
-    "username": "root",
-    "password": "1234",
-    "database": "iidxskill_development",
-    "host": "127.0.0.1",
-    "dialect": "mariadb"
-  },
   "test": {
     "username": "root",
     "password": "root",
-    "database": "iidxskill_test",
+    "database": "bananainfo_test",
     "host": "127.0.0.1",
     "dialect": "mariadb"
   },
