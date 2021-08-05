@@ -1,7 +1,7 @@
 const Router = require('koa-router');
 const router = new Router();
-const SongsCtrl = require('./songs.ctrl.js')
+const handler = require('./handler.js')
 
-router.get('/', SongsCtrl.getSongs);
+router.get('/', handler.getSongs);
 
 module.exports = router;
