@@ -1,29 +1,28 @@
-const { Charts, Songs, sequelize } = require('../../database/models');
+const { Chart, Song, sequelize } = require('../../database/models');
 const { StatusCodes } = require('http-status-codes');
 
 const dataTransfer = chart => {
-    const { title, artist, bpm, version } = chart.Song;
-    const { id, chart_difficulty, chart_level, chart_skillpoint, notes } = chart;
+    const { s_title, s_artist, s_tempo, s_version } = chart.Song;
+    const { c_diff, c_level, c_skill, c_notes } = chart;
 
     return {
-        id,
-        title,
-        artist,
-        bpm,
-        version,
-        difficulty: chart_difficulty,
-        level: chart_level,
-        skillpoint: chart_skillpoint,
-        notes,
+        title: s_title,
+        artist: s_artist,
+        bpm: s_tempo,
+        version: s_version,
+        difficulty: c_diff,
+        level: c_level,
+        skillpoint: c_skill,
+        notes: c_notes
     }
 }
 
 exports.findChartById = async ctx => {
     const { id } = ctx.params;
 
-    const chart = await Charts.findOne({
+    const chart = await Chart.findOne({
         where: { id: id },
-        include: Songs
+        include: Song
     })
     .then(chart => dataTransfer(chart))
     .catch(error => {
@@ -41,10 +40,10 @@ exports.findChartById = async ctx => {
 exports.findCharts = async ctx => {
     const { limit, offset } = ctx.query;
 
-    const charts = await Charts.findAll({
-        limit: limit ? limit : 50,
-        offset: offset ? offset : 1000,
-        include: Songs,
+    const charts = await Chart.findAll({
+        limit: limit ? limit * 1 : 50,
+        offset: offset ? offset * 1 : 0,
+        include: Song,
     }).then(charts => charts.map(chart => dataTransfer(chart)))
     .catch(error => {
         ctx.throw(StatusCodes.INTERNAL_SERVER_ERROR, error);
@@ -54,8 +53,5 @@ exports.findCharts = async ctx => {
         ctx.status = StatusCodes.NOT_FOUND; // 404
         return;
     }
-
-    const count = await Charts.count();
-
-    ctx.body = {list: [ ...charts ], last: Math.ceil(count / limit)};
+    ctx.body = [ ...charts ]
 }
