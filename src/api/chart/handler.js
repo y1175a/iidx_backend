@@ -3,9 +3,10 @@ const { StatusCodes } = require('http-status-codes');
 
 const dataTransfer = chart => {
     const { s_title, s_artist, s_tempo, s_version } = chart.Song;
-    const { c_diff, c_level, c_skill, c_notes } = chart;
+    const { id, c_diff, c_level, c_skill, c_notes } = chart;
 
     return {
+        id,
         title: s_title,
         artist: s_artist,
         bpm: s_tempo,
