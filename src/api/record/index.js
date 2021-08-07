@@ -3,8 +3,8 @@ const router = new Router();
 const handler = require('./handler');
 const passport = require('koa-passport');
 
-router.post('/', handler.parsePlaydata, handler.updatePlaydata);
+router.post('/', handler.parseRecord, handler.updateRecord);
 
-router.get('/:chartId/user/:userId', handler.getPlaydataOne);
+router.get('/:chartId/user/:userId', handler.getRecordOne);
 
 module.exports = router;
