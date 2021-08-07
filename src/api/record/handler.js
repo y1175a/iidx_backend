@@ -1,91 +1,96 @@
 const { Op } = require("sequelize");
-const { Users, Songs, Profiles, Charts, Playdata } = require('../../database/models');
+const { User, Song, Chart, Record } = require('../../database/models');
 const { StatusCodes } = require('http-status-codes');
 
-const findUserId = async id => await Profiles.findOne({
-    where: { iidx_id: id },
-}).then(profile => profile.user_id)
-.catch(error => {
-    ctx.throw(StatusCodes.INTERNAL_SERVER_ERROR, error); 
-});
+const findUser = async rivalcode => await User.findOne({
+    where: { u_rivalcode: rivalcode },
+})
 
-const findChart = async (data) => await Songs.findOne({
-    where: { title: data.title },
-    include: Charts
+const findChart = async data => await Song.findOne({
+    where: { s_title: data.title },
+    include: Chart
 }).then(song => song.get())
-    .then(({ Charts }) => Charts.map(chart => chart.get()))
-    .then(charts => charts.filter(chart => chart.chart_difficulty === data.difficulty)[0])
+    .then(({ Charts }) => Charts.map(chart => chart.get()).filter(chart => chart.c_diff === data.difficulty)[0])
+    
+const calculateSkillpoint = (skill, score, notes) => (score / notes) * 2 * skill * 200;
 
-const updatePlaydata = async (data, chart, userId) => {
-    const existData = await Playdata.findOne({
+const updateRecord = async (data, user, chart) => {
+    const existData = await Record.findOne({
         where: {[Op.and]: [
-            { user_id: userId },
+            { user_id: user.id },
             { chart_id: chart.id }
         ]}
     })
-
-    const rate = data.score / (chart.notes * 2)
-    const skillpoint = chart.chart_skillpoint * rate * 200;
     
     if (existData){
-        await Playdata.update({
-            rank: data.rank,
-            score: data.score,
-            pgreat: data.pgreat,
-            great: data.great,
-            cleartype: data.cleartype,
-            skillpoint: skillpoint.toFixed(2),
-        }, { where: {[Op.and]: [
-            { user_id: userId },
-            { chart_id: chart.id }
-        ]}});
+        await Record.update({
+            r_rank: data.rank,
+            r_score: data.score,
+            r_cleartype: data.cleartype,
+            r_skillpoint: calculateSkillpoint(chart.c_skill, data.score, chart.c_notes),
+        }, {
+            where: {
+                [Op.and]: [
+                    { user_id: user.id },
+                    { chart_id: chart.id }
+                ]
+            }
+        });
     } else {
-        await Playdata.create({
+        await Record.create({
+            user_id: user.id,
             chart_id: chart.id,
-            user_id: userId,
-            rank: data.rank,
-            score: data.score,
-            pgreat: data.pgreat,
-            great: data.great,
-            cleartype: data.cleartype,
-            skillpoint: skillpoint.toFixed(2),
+            r_rank: data.rank,
+            r_score: data.score,
+            r_pgreat: data.pgreat,
+            r_great: data.great,
+            r_cleartype: data.cleartype,
+            r_skillpoint: calculateSkillpoint(chart.c_skill, data.score, chart.c_notes),
         });
     }
 }
 
-exports.parsePlaydata = (ctx, next) => {
-    const { playdata, id } = ctx.request.body;
-    ctx.state.playdata = JSON.parse(decodeURIComponent(playdata));
-    console.log(ctx.state.playdata);
+exports.parseRecord = (ctx, next) => {
+    const { records, id } = ctx.request.body;
+    ctx.state.records = JSON.parse(decodeURIComponent(records));
     ctx.state.id = id;
     return next();
 }
 
-exports.updatePlaydata = async (ctx) => {
-    const userId = await findUserId(ctx.state.id).catch(error => {
-        ctx.throw(StatusCodes.INTERNAL_SERVER_ERROR, error); 
-    });;
-    const playdata = ctx.state.playdata;
-    const missingList = []
-    for (const data of playdata) {
-        const chart = await findChart(data).catch(error => {
-            missingList.push(data.title);
-        });
-        if (chart) await updatePlaydata(data, chart, userId).catch(error => {
+exports.updateRecord = async (ctx) => {
+    const { records, id } = ctx.state;
+
+    const user = await findUser(id)
+        .catch(error => {
             ctx.throw(StatusCodes.INTERNAL_SERVER_ERROR, error); 
+        });;
+
+    const missingList = []
+
+    for (const record of records) {
+
+        const chart = await findChart(record).catch(error => {
+            missingList.push(record.title);
         });
+
+        if (chart) {
+            await updateRecord(record, user, chart).catch(error => {
+                ctx.throw(StatusCodes.INTERNAL_SERVER_ERROR, error); 
+            });
+        }
+
     }
     ctx.body = "다음의 곡은 아직 업데이트되지 않았습니다. " + missingList;
 }
 
-exports.getPlaydataOne = async (ctx) => {
-    const { chartId, userId } = ctx.params;
-    const playdata = await Playdata.findOne({
+exports.getRecordOne = async (ctx) => {
+    const { userId, chartId } = ctx.params;
+    const record = await Record.findOne({
         where: {[Op.and]: [
             { user_id: userId },
             { chart_id: chartId }
         ]}
     })
-    ctx.body = playdata;
+    ctx.body = record;
 }
 
